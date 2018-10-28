@@ -1,0 +1,6 @@
+flake8
+mock
+pylint
+pytest
+pytest-cov
+requests
