@@ -43,5 +43,5 @@ For calcuting an amount with the actual exchange rate:
 Code check
 ----------
 
-For code style check with pylint and flake8 and for unittest with py36:
+For code style check with pylint and flake8 and for unittest with py36, py37 and py38:
 run 'tox' in the root of the repository.
