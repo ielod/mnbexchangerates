@@ -25,8 +25,9 @@ RESPONSE_EMPTY_VALID = b"""<validxml><sometag>aaa</sometag></validxml>"""
 CACHE = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')]}
 EMPTY_CACHE = None
 
-RESULT_FROM_RESPONSE_VALID = 'MNB exchange rate of  1 EUR = 500,000 HUF  (2018-01-03)'
-RESULT_FROM_CACHE = 'MNB exchange rate of  1 EUR = 600,000 HUF  (2018-01-03)'
+RESULT_FROM_RESPONSE_VALID = 'MNB exchange rate of  1 EUR = 500 HUF  (2018-01-03)'
+RESULT_FROM_CACHE = 'MNB exchange rate of  1 EUR = 600 HUF  (2018-01-03)'
+RESULT_2_EUR_RESPONSE_VALID = 'MNB exchange rate of  2 EUR = 1000 HUF  (2018-01-03)'
 
 DEBUG_ON = True
 DEBUG_OFF = False
@@ -89,22 +90,22 @@ class MNBExchangeRatesTest(unittest.TestCase):
     def test_get_exchange_of_amount(self):
         self._set_request_post_return_value()
         result = self.mnb.get_exchange_of_amount('EUR', 2)
-        self.assertEqual('MNB exchange rate of  2 EUR = 1000,00 HUF  (2018-01-03)', result)
+        self.assertEqual(RESULT_2_EUR_RESPONSE_VALID, result)
 
     def test_get_exchange_of_fake_float_amount(self):
         self._set_request_post_return_value()
         result = self.mnb.get_exchange_of_amount('EUR', 2.0)
-        self.assertEqual('MNB exchange rate of  2 EUR = 1000,00 HUF  (2018-01-03)', result)
+        self.assertEqual(RESULT_2_EUR_RESPONSE_VALID, result)
 
     def test_get_exchange_of_float_amount(self):
         self._set_request_post_return_value()
         result = self.mnb.get_exchange_of_amount('EUR', 2.5)
-        self.assertEqual('MNB exchange rate of  2,5 EUR = 1250,00 HUF  (2018-01-03)', result)
+        self.assertEqual('MNB exchange rate of  2,5 EUR = 1250 HUF  (2018-01-03)', result)
 
     def test_get_exchange_of_string_amount(self):
         self._set_request_post_return_value()
         result = self.mnb.get_exchange_of_amount('EUR', '2.0')
-        self.assertEqual('MNB exchange rate of  2 EUR = 1000,00 HUF  (2018-01-03)', result)
+        self.assertEqual(RESULT_2_EUR_RESPONSE_VALID, result)
 
     def test_get_exchange_of_amount_with_error(self):
         self._set_request_post_return_value(code=404, content='dummy')

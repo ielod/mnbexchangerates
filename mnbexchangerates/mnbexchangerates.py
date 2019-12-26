@@ -92,7 +92,7 @@ class MNBExchangeRates:
             answer = 'MNB exchange rate of  %s %s = %s HUF  (%s)' % (
                 rate_dict['unit'],
                 rate_dict['currency'],
-                rate_dict['rate'],
+                self._simplified_number_format(rate_dict['rate']),
                 rate_dict['date'])
         except Exception as exc:  # pylint: disable=W0703
             answer = str(exc)
@@ -106,7 +106,7 @@ class MNBExchangeRates:
         try:
             rate_dict = self.get_rate_for_currency(currency)
             total = (float(amount) * float(rate_dict['rate'].replace(',', '.'))) / float(rate_dict['unit'])
-            total = ("%.2f" % total).replace('.', ',')
+            total = self._simplified_number_format("%.2f" % total)
             answer = 'MNB exchange rate of  %s %s = %s HUF  (%s)' % (
                 self._simplified_number_format(amount),
                 rate_dict['currency'],
