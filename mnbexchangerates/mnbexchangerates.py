@@ -44,6 +44,16 @@ class MNBExchangeRates:
                     'rates': [(rate.attrib['unit'], rate.attrib['curr'], rate.text) for rate in rates]}
         return None
 
+    @classmethod
+    def _simplified_number_format(cls, number):
+        number = str(number).replace('.', ',')
+        if ',' in number:
+            while number[-1] == '0':
+                number = number[:-1]
+            if number[-1] == ',':
+                number = number[:-1]
+        return number
+
     def fetch_rates(self):
         response = requests.post(URL, data=BODY, headers=HEADERS)
         self.log.debug('Response from url %s : %s -- %s', URL, response.status_code, response.content)
@@ -98,7 +108,7 @@ class MNBExchangeRates:
             total = (float(amount) * float(rate_dict['rate'].replace(',', '.'))) / float(rate_dict['unit'])
             total = ("%.2f" % total).replace('.', ',')
             answer = 'MNB exchange rate of  %s %s = %s HUF  (%s)' % (
-                amount,
+                self._simplified_number_format(amount),
                 rate_dict['currency'],
                 total,
                 rate_dict['date'])
