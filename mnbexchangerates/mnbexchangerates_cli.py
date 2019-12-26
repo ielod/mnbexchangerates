@@ -5,11 +5,20 @@ import sys
 from mnbexchangerates import mnbexchangerates
 
 
+def supported_float(number):
+    number = number.replace(',', '.')
+    try:
+        number = float(number)
+    except ValueError:
+        raise argparse.ArgumentTypeError("{} is not a number".format(number))
+    return number
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Fetch MNB Exchange Rates')
     parser.add_argument('currency', help='Fetch Exchange rate from <currency> to HUF')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-a', '--amount', type=int)
+    parser.add_argument('-a', '--amount', type=supported_float)
     return parser.parse_args()
 
 

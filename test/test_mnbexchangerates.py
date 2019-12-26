@@ -91,6 +91,11 @@ class MNBExchangeRatesTest(unittest.TestCase):
         result = self.mnb.get_exchange_of_amount('EUR', '2')
         self.assertEqual('MNB exchange rate of  2 EUR = 1000,00 HUF  (2018-01-03)', result)
 
+    def test_get_exchange_of_float_amount(self):
+        self._set_request_post_return_value()
+        result = self.mnb.get_exchange_of_amount('EUR', '2.5')
+        self.assertEqual('MNB exchange rate of  2.5 EUR = 1250,00 HUF  (2018-01-03)', result)
+
     def test_get_exchange_of_amount_with_error(self):
         self._set_request_post_return_value(code=404, content='dummy')
         result = self.mnb.get_exchange_of_amount('EUR', '2')
