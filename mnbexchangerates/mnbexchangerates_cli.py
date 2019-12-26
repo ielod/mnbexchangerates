@@ -17,9 +17,12 @@ def supported_float(number):
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Fetch MNB Exchange Rates')
     parser.add_argument('currency', help='Fetch Exchange rate from <currency> to HUF')
-    parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-c', '--cache-only', action='store_true')
-    parser.add_argument('-a', '--amount', type=supported_float)
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='show debug logs')
+    parser.add_argument('-c', '--cache-only', action='store_true',
+                        help='force use of cache (ignore cache age)')
+    parser.add_argument('-a', '--amount', type=supported_float,
+                        help='fetch exchange rate of the given AMOUNT')
     return parser.parse_args()
 
 
