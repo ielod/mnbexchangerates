@@ -22,10 +22,10 @@ BODY = """<?xml version="1.0" encoding="UTF-8"?>
 
 class MNBExchangeRates:
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, cache_only=False):
         self.log = mnbexchangerates_logger.MNBExchangeRatesLogger(debug=debug).get_logger()
         self.log.debug('ON')
-        self.cache = mnbexchangerates_cache.MNBExchangeRateCache(debug=debug)
+        self.cache = mnbexchangerates_cache.MNBExchangeRateCache(debug=debug, cache_only=cache_only)
 
     def _parse_soap_xml(self, xml_content):
         unescaped = html.unescape(xml_content.decode())

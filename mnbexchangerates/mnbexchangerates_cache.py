@@ -14,10 +14,11 @@ REFRESH_HOUR = 11
 
 class MNBExchangeRateCache:
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, cache_only=False):
         self.log = mnbexchangerates_logger.MNBExchangeRatesLogger(debug).get_logger()
         self.log.debug('Cache file path: %s', RATES_CACHE_FILE)
         self._ensure_cache_dir()
+        self.cache_only = cache_only
         self.time = None
         self.today = None
         self.yesterday = None
@@ -76,6 +77,8 @@ class MNBExchangeRateCache:
                     cached_rates.get('rates') is None):
                 self.log.debug('Cache seem to be invalid, emptying it.')
                 cached_rates = None
+            elif self.cache_only:
+                self.log.debug('Forced use of cache.')
             elif (cached_rates['date'] != self.today and
                   not (cached_rates['date'] == self.yesterday and self.time.hour < REFRESH_HOUR) and
                   self._check_not_weekend(cached_rates['date'])):
