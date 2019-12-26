@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='mnbexchangerates',
-    version=0.1,
+    version=0.2,
     install_requires=['requests'],
     entry_points={
         'console_scripts': [
