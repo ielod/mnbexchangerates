@@ -45,8 +45,22 @@ class MNBExchangeRates:
         return None
 
     @classmethod
+    def _group_digits(cls, number):
+        if ',' in number:
+            index = number.find(',')
+            grouped = number[index:]
+            number = number[:index]
+        else:
+            grouped = ''
+        while len(number) > 0:
+            grouped = '\'' + number[-3:] + grouped
+            number = number[:-3]
+        return grouped.strip('\'')
+
+    @classmethod
     def _simplified_number_format(cls, number):
         number = str(number).replace('.', ',')
+        number = cls._group_digits(number)
         if ',' in number:
             while number[-1] == '0':
                 number = number[:-1]
