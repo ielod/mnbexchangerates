@@ -78,12 +78,14 @@ class MNBExchangeRateCache:
                 self.log.debug('Cache seem to be invalid, emptying it.')
                 cached_rates = None
             elif self.cache_only:
+                cached_rates.update({'uptodate': True})
                 self.log.debug('Forced use of cache.')
             elif (cached_rates['date'] != self.today and
                   not (cached_rates['date'] == self.yesterday and self.time.hour < REFRESH_HOUR) and
                   self._check_not_weekend(cached_rates['date'])):
-                self.log.debug('Cache is old, emptying it.')
-                cached_rates = None
+                cached_rates.update({'uptodate': False})
+                self.log.debug('Cache is not up-to-date.')
             else:
-                self.log.debug('Cache is up to date.')
+                cached_rates.update({'uptodate': True})
+                self.log.debug('Cache is up-to-date.')
         return cached_rates

@@ -22,7 +22,8 @@ RESPONSE_VALID = b"""<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelo
 RESPONSE_INVALID = b"""some invalid response"""
 RESPONSE_EMPTY_VALID = b"""<validxml><sometag>aaa</sometag></validxml>"""
 
-CACHE = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')]}
+CACHE = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')], 'uptodate': True}
+CACHE_OLD = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')], 'uptodate': False}
 EMPTY_CACHE = None
 
 RESULT_FROM_RESPONSE_VALID = 'MNB exchange rate of  1 EUR = 500 HUF  (2018-01-03)'
@@ -61,6 +62,7 @@ class MNBExchangeRatesTest(unittest.TestCase):
     def test_get_eur(self):
         self._set_request_post_return_value()
         self._assert_result(currency='EUR', expected_result=RESULT_FROM_RESPONSE_VALID)
+        self.mock_cache.MNBExchangeRateCache.return_value.save.assert_called()
 
     def test_without_debug(self):
         self.mnb = mnbexchangerates.MNBExchangeRates(DEBUG_OFF)
@@ -82,6 +84,13 @@ class MNBExchangeRatesTest(unittest.TestCase):
     def test_with_cache(self):
         self.mock_cache.MNBExchangeRateCache.return_value.load.return_value = CACHE
         self._assert_result(expected_result=RESULT_FROM_CACHE)
+        self.mock_cache.MNBExchangeRateCache.return_value.save.assert_not_called()
+
+    def test_with_old_cache_but_fetched_the_same_days_rates(self):
+        self.mock_cache.MNBExchangeRateCache.return_value.load.return_value = CACHE_OLD
+        self._set_request_post_return_value()
+        self._assert_result(expected_result=RESULT_FROM_RESPONSE_VALID)
+        self.mock_cache.MNBExchangeRateCache.return_value.save.assert_not_called()
 
     def test_invalid_currency(self):
         self._set_request_post_return_value()

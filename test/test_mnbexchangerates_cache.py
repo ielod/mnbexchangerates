@@ -7,9 +7,19 @@ from mnbexchangerates import mnbexchangerates_cache as cache
 
 
 CACHE_VALID = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')]}
+LOADED_CACHE_VALID = {'date': '2018-01-03', 'rates': [('1', 'EUR', '600,000')], 'uptodate': True}
+
 CACHE_OLD = {'date': '2017-12-01', 'rates': [('1', 'EUR', '200,000')]}
+LOADED_CACHE_OLD = {'date': '2017-12-01', 'rates': [('1', 'EUR', '200,000')], 'uptodate': False}
+LOADED_CACHE_OLD_BUT_FORCED = {'date': '2017-12-01', 'rates': [('1', 'EUR', '200,000')], 'uptodate': True}
+
 CACHE_YESTERDAY = {'date': '2018-01-02', 'rates': [('1', 'EUR', '300,000')]}
+LOADED_CACHE_YESTERDAY_UPTODATE = {'date': '2018-01-02', 'rates': [('1', 'EUR', '300,000')], 'uptodate': True}
+
 CACHE_FROM_FRIDAY = {'date': '2018-07-06', 'rates': [('1', 'EUR', '400,000')]}
+LOADED_CACHE_FROM_FRIDAY_UPTODATE = {'date': '2018-07-06', 'rates': [('1', 'EUR', '400,000')], 'uptodate': True}
+LOADED_CACHE_FROM_FRIDAY_OUTOFDATE = {'date': '2018-07-06', 'rates': [('1', 'EUR', '400,000')], 'uptodate': False}
+
 CACHE_INVALID = None
 
 
@@ -35,8 +45,8 @@ class MNBExchangeRateCacheTest(unittest.TestCase):
         self.mnb = None
 
     def test_valid_cache(self):
-        self.mock_pickle.load.return_value = CACHE_VALID
-        self.assertEqual(CACHE_VALID, self.cache.load())
+        self.mock_pickle.load.return_value = CACHE_VALID.copy()
+        self.assertEqual(LOADED_CACHE_VALID, self.cache.load())
 
     def test_invalid_cache(self):
         self.mock_pickle.load.return_value = 'invalid'
@@ -55,48 +65,48 @@ class MNBExchangeRateCacheTest(unittest.TestCase):
         self.assertEqual(CACHE_INVALID, self.cache.load())
 
     def test_old_cache(self):
-        self.mock_pickle.load.return_value = CACHE_OLD
-        self.assertEqual(CACHE_INVALID, self.cache.load())
+        self.mock_pickle.load.return_value = CACHE_OLD.copy()
+        self.assertEqual(LOADED_CACHE_OLD, self.cache.load())
 
     def test_cache_from_yesterday_but_its_too_early(self):
         self.mock_datetime.now.return_value = datetime(2018, 1, 3, 9, 0)
-        self.mock_pickle.load.return_value = CACHE_YESTERDAY
-        self.assertEqual(CACHE_YESTERDAY, self.cache.load())
+        self.mock_pickle.load.return_value = CACHE_YESTERDAY.copy()
+        self.assertEqual(LOADED_CACHE_YESTERDAY_UPTODATE, self.cache.load())
 
     def test_cahce_old_but_weekend(self):
         self.mock_datetime.now.return_value = datetime(2018, 7, 7, 18, 0)
         self.mock_datetime.strptime.return_value = datetime(2018, 7, 6)
-        self.mock_pickle.load.return_value = CACHE_FROM_FRIDAY
-        self.assertEqual(CACHE_FROM_FRIDAY, self.cache.load())
+        self.mock_pickle.load.return_value = CACHE_FROM_FRIDAY.copy()
+        self.assertEqual(LOADED_CACHE_FROM_FRIDAY_UPTODATE, self.cache.load())
 
     def test_cahce_from_friday_but_early_monday_morning(self):
         self.mock_datetime.now.return_value = datetime(2018, 7, 9, 10, 0)
         self.mock_datetime.strptime.return_value = datetime(2018, 7, 6)
         self.mock_pickle.load.return_value = CACHE_FROM_FRIDAY
-        self.assertEqual(CACHE_FROM_FRIDAY, self.cache.load())
+        self.assertEqual(LOADED_CACHE_FROM_FRIDAY_UPTODATE, self.cache.load())
 
     def test_cahce_from_friday_and_monday_afternoon(self):
         self.mock_datetime.now.return_value = datetime(2018, 7, 9, 14, 0)
         self.mock_datetime.strptime.return_value = datetime(2018, 7, 6)
         self.mock_pickle.load.return_value = CACHE_FROM_FRIDAY
-        self.assertEqual(CACHE_INVALID, self.cache.load())
+        self.assertEqual(LOADED_CACHE_FROM_FRIDAY_OUTOFDATE, self.cache.load())
 
     def test_old_cache_but_force_use_cache(self):
         self.cache = cache.MNBExchangeRateCache(debug=True, cache_only=True)
         self.mock_pickle.load.return_value = CACHE_OLD
-        self.assertEqual(CACHE_OLD, self.cache.load())
+        self.assertEqual(LOADED_CACHE_OLD_BUT_FORCED, self.cache.load())
 
     def test_cahce_from_friday_and_monday_afternoon_but_force_use_cache(self):
         self.cache = cache.MNBExchangeRateCache(debug=True, cache_only=True)
         self.mock_datetime.now.return_value = datetime(2018, 7, 9, 14, 0)
         self.mock_datetime.strptime.return_value = datetime(2018, 7, 6)
         self.mock_pickle.load.return_value = CACHE_FROM_FRIDAY
-        self.assertEqual(CACHE_FROM_FRIDAY, self.cache.load())
+        self.assertEqual(LOADED_CACHE_FROM_FRIDAY_UPTODATE, self.cache.load())
 
     def test_valid_cache_but_force_use_cache(self):
         self.cache = cache.MNBExchangeRateCache(debug=True, cache_only=True)
         self.mock_pickle.load.return_value = CACHE_VALID
-        self.assertEqual(CACHE_VALID, self.cache.load())
+        self.assertEqual(LOADED_CACHE_VALID, self.cache.load())
 
     def test_invalid_cache_but_force_use_cache(self):
         self.cache = cache.MNBExchangeRateCache(debug=True, cache_only=True)

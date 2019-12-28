@@ -68,13 +68,16 @@ class MNBExchangeRates:
                 number = number[:-1]
         return number
 
-    def fetch_rates(self):
+    def fetch_rates(self, cache_date=None):
         response = requests.post(URL, data=BODY, headers=HEADERS)
         self.log.debug('Response from url %s : %s -- %s', URL, response.status_code, response.content)
         if response.status_code == 200:
             rates = self._parse_soap_xml(response.content)
             if rates:
-                self.cache.save(rates)
+                if rates['date'] != cache_date:
+                    self.cache.save(rates)
+                else:
+                    self.log.debug('Cache is old but fetched rates are from the same date.')
                 return rates
             self.log.debug('Exchange rates parsing failed. Invalid content?')
             raise Exception('Malformed content received from server')
@@ -84,8 +87,13 @@ class MNBExchangeRates:
         cached_rates = self.cache.load()
         if cached_rates is None:
             self.log.debug('Cache is empty, so fetching now...')
-            return self.fetch_rates()
-        return cached_rates
+            rates = self.fetch_rates()
+        elif cached_rates['uptodate']:
+            rates = cached_rates
+        else:
+            self.log.debug('Cache is old, so fetching now...')
+            rates = self.fetch_rates(cached_rates['date'])
+        return rates
 
     def get_rate_for_currency(self, currency):
         rates_dict = self.get_rates()
