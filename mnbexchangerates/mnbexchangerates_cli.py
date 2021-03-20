@@ -9,8 +9,8 @@ def supported_float(number):
     number = number.replace(',', '.')
     try:
         number = float(number)
-    except ValueError:
-        raise argparse.ArgumentTypeError("{} is not a number".format(number))
+    except ValueError as value_error:
+        raise argparse.ArgumentTypeError("{} is not a number".format(number)) from value_error
     return number
 
 
