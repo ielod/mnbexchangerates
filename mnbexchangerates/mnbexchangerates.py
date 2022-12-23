@@ -81,7 +81,7 @@ class MNBExchangeRates:
                 return rates
             self.log.debug('Exchange rates parsing failed. Invalid content?')
             raise Exception('Malformed content received from server')
-        raise Exception('Server response: %s' % response.status_code)
+        raise Exception(f'Server response: {response.status_code}')
 
     def get_rates(self):
         cached_rates = self.cache.load()
@@ -104,18 +104,15 @@ class MNBExchangeRates:
                     'unit': rate[0][0],
                     'currency': rate[0][1],
                     'rate': rate[0][2]}
-        raise Exception('Currency not found: %s' % currency)
+        raise Exception(f'Currency not found: {currency}')
 
     def get_str_of_rate_for_currency(self, currency):
         currency = currency.upper()
         self.log.debug('Currency to look for: %s', currency)
         try:
             rate_dict = self.get_rate_for_currency(currency)
-            answer = 'MNB exchange rate of  %s %s = %s HUF  (%s)' % (
-                rate_dict['unit'],
-                rate_dict['currency'],
-                self._simplified_number_format(rate_dict['rate']),
-                rate_dict['date'])
+            answer = (f"MNB exchange rate of  {rate_dict['unit']} {rate_dict['currency']} = "
+                      f"{self._simplified_number_format(rate_dict['rate'])} HUF  ({rate_dict['date']})")
         except Exception as exc:  # pylint: disable=W0703
             answer = str(exc)
             self.log.debug(answer)
@@ -128,12 +125,9 @@ class MNBExchangeRates:
         try:
             rate_dict = self.get_rate_for_currency(currency)
             total = (float(amount) * float(rate_dict['rate'].replace(',', '.'))) / float(rate_dict['unit'])
-            total = self._simplified_number_format("%.2f" % total)
-            answer = 'MNB exchange rate of  %s %s = %s HUF  (%s)' % (
-                self._simplified_number_format(amount),
-                rate_dict['currency'],
-                total,
-                rate_dict['date'])
+            total = self._simplified_number_format(f"{total:.2f}")
+            answer = (f"MNB exchange rate of  {self._simplified_number_format(amount)} "
+                      f"{rate_dict['currency']} = {total} HUF  ({rate_dict['date']})")
         except Exception as exc:  # pylint: disable=W0703
             answer = str(exc)
             self.log.debug(answer)

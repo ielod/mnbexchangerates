@@ -10,7 +10,7 @@ def supported_float(number):
     try:
         number = float(number)
     except ValueError as value_error:
-        raise argparse.ArgumentTypeError("{} is not a number".format(number)) from value_error
+        raise argparse.ArgumentTypeError(f"{number} is not a number") from value_error
     return number
 
 
