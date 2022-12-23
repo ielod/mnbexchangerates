@@ -12,7 +12,7 @@ Installation
 
 To install use e.g. pip:
 
-> sudo pip install .
+> python -m pip install .
 
 This will install the CLI.
 
@@ -43,5 +43,5 @@ For calcuting an amount with the actual exchange rate:
 Code check
 ----------
 
-For code style check with pylint and flake8 and for unittest with py36, py37 and py38:
+For code style check with pylint and flake8 and for unittest with py38 and py310:
 run 'tox' in the root of the repository.
