@@ -69,7 +69,7 @@ class MNBExchangeRates:
         return number
 
     def fetch_rates(self, cache_date=None):
-        response = requests.post(URL, data=BODY, headers=HEADERS)
+        response = requests.post(URL, data=BODY, headers=HEADERS, timeout=10)
         self.log.debug('Response from url %s : %s -- %s', URL, response.status_code, response.content)
         if response.status_code == 200:
             rates = self._parse_soap_xml(response.content)
