@@ -2,7 +2,7 @@ name: tests
 on: [push]
 jobs:
   tox-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - name: Install tox
@@ -12,5 +12,5 @@ jobs:
       - name: Run pylint
         run: tox -e pylint
       - name: Run unit tests (py310)
-        run: tox -e py310
+        run: tox -e py312
 

@@ -80,8 +80,8 @@ class MNBExchangeRates:
                     self.log.debug('Cache is old but fetched rates are from the same date.')
                 return rates
             self.log.debug('Exchange rates parsing failed. Invalid content?')
-            raise Exception('Malformed content received from server')
-        raise Exception(f'Server response: {response.status_code}')
+            raise Exception('Malformed content received from server')  # pylint: disable=W0719
+        raise Exception(f'Server response: {response.status_code}')  # pylint: disable=W0719
 
     def get_rates(self):
         cached_rates = self.cache.load()
@@ -104,7 +104,7 @@ class MNBExchangeRates:
                     'unit': rate[0][0],
                     'currency': rate[0][1],
                     'rate': rate[0][2]}
-        raise Exception(f'Currency not found: {currency}')
+        raise Exception(f'Currency not found: {currency}')  # pylint: disable=W0719
 
     def get_str_of_rate_for_currency(self, currency):
         currency = currency.upper()
